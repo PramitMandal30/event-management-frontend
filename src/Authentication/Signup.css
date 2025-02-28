@@ -1,0 +1,33 @@
+body {
+  overflow: hidden;
+}
+
+.addUser {
+  width: 30%;
+  margin: 30px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+.authenticateUser {
+  width: 30%;
+  margin: 110px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+.formTitle {
+  text-align: center;
+}
+
+.login {
+  text-align: center;
+}
+
+.inputGroup button {
+  margin-top: 10px;
+}
