@@ -11,6 +11,7 @@ import { faDownload, faPenToSquare, faSquarePlus, faTrash } from "@fortawesome/f
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [mode, setMode] = useState("add");
   const [currentEvent, setCurrentEvent] = useState({
     id: "",
@@ -20,7 +21,8 @@ const Events = () => {
     venue: "",
     description: "",
   });
-
+  const [confirmationAction, setConfirmationAction] = useState(null); // "book" or "delete"
+  
   const { auth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -96,9 +98,52 @@ const Events = () => {
     }
   };
 
+  // Handle Book Event
+  const handleBookEvent = (event) => {
+    setCurrentEvent(event);
+    setConfirmationAction("book");
+    setShowConfirmationModal(true);
+  };
+
+  // Handle Delete Event
+  const handleDeleteEvent = (event) => {
+    setCurrentEvent(event);
+    setConfirmationAction("delete");
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmAction = async () => {
+    try {
+      if (confirmationAction === "book") {
+        await axios.post(`http://localhost:8765/users/${auth.id}/register-event/${currentEvent.id}`, {}, {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        });
+        toast.success("Successfully booked the event!");
+      } else if (confirmationAction === "delete") {
+        await axios.delete(`http://localhost:8765/admins/delete-event/${currentEvent.id}`, {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        });
+        setEvents((prev) => prev.filter((event) => event.id !== currentEvent.id));
+        toast.success("Event deleted successfully!");
+      }
+      setShowConfirmationModal(false); // Close confirmation modal after action
+    } catch (error) {
+      toast.error("Action failed. Please try again.");
+      setShowConfirmationModal(false);
+    }
+  };
+
+  const handleCancelAction = () => {
+    setShowConfirmationModal(false);
+  };
+
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div className="container mt-5">
         <table className="table table-bordered table-hover">
           <thead className="table-secondary">
@@ -122,66 +167,105 @@ const Events = () => {
                 <td>{event.venue}</td>
                 <td>{event.description}</td>
                 <td>
-                  { auth.role === "ROLE_ADMIN" && (<button
+                  {auth.role === "ROLE_ADMIN" && (
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => handleShowModal(event, "update")}
+                    >
+                      Update
+                      <FontAwesomeIcon icon={faPenToSquare} className="ms-1" />
+                    </button>
+                  )}
+                  <button
                     type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleShowModal(event, "update")}
+                    className="btn btn-warning me-2"
+                    onClick={() => handleBookEvent(event)}
                   >
-                    Update
-                    <FontAwesomeIcon icon={faPenToSquare} className="ms-1"/>
-                  </button>)}
-                  <button type="button" className="btn btn-warning me-2">
                     Book
                     <FontAwesomeIcon icon={faDownload} className="ms-1" />
                   </button>
-                  { auth.role === "ROLE_ADMIN" && (<button type="button" className="btn btn-danger">
-                    Delete
-                    <FontAwesomeIcon icon={faTrash} className="ms-1" />
-                  </button>)}
+                  {auth.role === "ROLE_ADMIN" && (
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteEvent(event)}
+                    >
+                      Delete
+                      <FontAwesomeIcon icon={faTrash} className="ms-1" />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      { auth.role === "ROLE_ADMIN" && (<div className="d-flex justify-content-center mt-4">
-        <button
-          type="button"
-          className="btn btn-success"
-          onClick={() =>
-            handleShowModal(
-              {
-                id: "",
-                name: "",
-                date: "",
-                location: "",
-                venue: "",
-                description: "",
-              },
-              "add"
-            )
-          }
-        >
-          Add Event
-          <FontAwesomeIcon icon={faSquarePlus} className="ms-1" />
-        </button>
-      </div>)}
+      {auth.role === "ROLE_ADMIN" && (
+        <div className="d-flex justify-content-center mt-4">
+          <button
+            type="button"
+            className="btn btn-success"
+            onClick={() =>
+              handleShowModal(
+                {
+                  id: "",
+                  name: "",
+                  date: "",
+                  location: "",
+                  venue: "",
+                  description: "",
+                },
+                "add"
+              )
+            }
+          >
+            Add Event
+            <FontAwesomeIcon icon={faSquarePlus} className="ms-1" />
+          </button>
+        </div>
+      )}
 
-      <div
-        className={`modal blur-background ${showModal ? "show d-block" : ""}`}
-        tabIndex="-1"
-      >
+      {/* Confirmation Modal */}
+      {showConfirmationModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {confirmationAction === "book" ? "Confirm Booking" : "Confirm Delete"}
+                </h5>
+                <button type="button" className="btn-close" onClick={handleCancelAction}></button>
+              </div>
+              <div className="modal-body">
+                <p>
+                  {confirmationAction === "book"
+                    ? `Are you sure you want to book the event: ${currentEvent.name}?`
+                    : `Are you sure you want to delete the event: ${currentEvent.name}?`}
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCancelAction}>
+                  Cancel
+                </button>
+                <button type="button" className="btn btn-danger" onClick={handleConfirmAction}>
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Event / Edit Event Modal */}
+      <div className={`modal blur-background ${showModal ? "show d-block" : ""}`} tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
                 {mode === "update" ? "Update Event" : "Add New Event"}
               </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={handleCloseModal}
-              ></button>
+              <button type="button" className="btn-close" onClick={handleCloseModal}></button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleSubmit} className="eventForm">
@@ -189,24 +273,12 @@ const Events = () => {
                   <div className="row">
                     {mode === "update" && (
                       <div className="col-md-12 mb-3">
-                        <label htmlFor="id" className="form-label">
-                          ID
-                        </label>
-                        <input
-                          type="text"
-                          id="id"
-                          name="id"
-                          className="form-control"
-                          value={currentEvent.id}
-                          onChange={handleChange}
-                          disabled
-                        />
+                        <label htmlFor="id" className="form-label">ID</label>
+                        <input type="text" id="id" name="id" className="form-control" value={currentEvent.id} disabled />
                       </div>
                     )}
                     <div className="col-md-6 mb-3">
-                      <label htmlFor="name" className="form-label">
-                        Name
-                      </label>
+                      <label htmlFor="name" className="form-label">Name</label>
                       <input
                         type="text"
                         id="name"
@@ -218,9 +290,7 @@ const Events = () => {
                       />
                     </div>
                     <div className="col-md-6 mb-3">
-                      <label htmlFor="date" className="form-label">
-                        Date
-                      </label>
+                      <label htmlFor="date" className="form-label">Date</label>
                       <input
                         type="text"
                         id="date"
@@ -232,9 +302,7 @@ const Events = () => {
                       />
                     </div>
                     <div className="col-md-6 mb-3">
-                      <label htmlFor="location" className="form-label">
-                        Location
-                      </label>
+                      <label htmlFor="location" className="form-label">Location</label>
                       <input
                         type="text"
                         id="location"
@@ -246,9 +314,7 @@ const Events = () => {
                       />
                     </div>
                     <div className="col-md-6 mb-3">
-                      <label htmlFor="venue" className="form-label">
-                        Venue
-                      </label>
+                      <label htmlFor="venue" className="form-label">Venue</label>
                       <input
                         type="text"
                         id="venue"
@@ -260,9 +326,7 @@ const Events = () => {
                       />
                     </div>
                     <div className="col-md-12 mb-3">
-                      <label htmlFor="description" className="form-label">
-                        Description
-                      </label>
+                      <label htmlFor="description" className="form-label">Description</label>
                       <textarea
                         id="description"
                         name="description"
@@ -285,6 +349,7 @@ const Events = () => {
           </div>
         </div>
       </div>
+
       <ToastContainer />
     </div>
   );
