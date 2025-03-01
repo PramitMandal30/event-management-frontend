@@ -32,6 +32,10 @@ const Signin = () => {
         role: role,
       });
 
+      localStorage.setItem('auth_id', userId);
+      localStorage.setItem('auth_token', jwtToken);
+      localStorage.setItem('auth_role', role);
+
       toast.success("Login successful!");
       setTimeout(()=>{
         navigate("/events");
