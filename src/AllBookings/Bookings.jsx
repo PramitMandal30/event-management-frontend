@@ -2,14 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import NavbarBooking from "../Navbar/NavbarBooking";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const { auth } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -28,20 +25,9 @@ const Bookings = () => {
     if (auth.token) fetchBookings();
   }, [auth.token]);
 
-  const handleBackClick = () => {
-    navigate("/events");
-  };
-
   return (
     <div>
-      <nav className="navbar navbar-dark bg-dark">
-        <div className="container-fluid">
-          <button className="btn btn-outline-light" onClick={handleBackClick}>
-            <FontAwesomeIcon icon={faArrowLeft} className="me-1" />
-            Back
-          </button>
-        </div>
-      </nav>
+      <NavbarBooking/>
 
       <div className="container mt-4">
         <h2>Bookings List</h2>

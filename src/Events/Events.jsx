@@ -163,7 +163,7 @@ const Events = () => {
           }
         >
           Add Event
-          <FontAwesomeIcon icon={faSquarePlus} className="icon-space" />
+          <FontAwesomeIcon icon={faSquarePlus} className="ms-1" />
         </button>
       </div>)}
 

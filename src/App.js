@@ -7,6 +7,7 @@ import { AuthProvider } from "./AuthContext";
 import Users from "./AllUsers/Users";
 import Bookings from "./AllBookings/Bookings";
 import MyBookings from "./MyBookings/MyBookings";
+import Profile from "./MyProfile/Profile";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/users" Component={Users}></Route>
         <Route path="/bookings" Component={Bookings}></Route>
         <Route path="/mybookings" Component={MyBookings}></Route>
+        <Route path="/profile" Component={Profile}></Route>
       </Routes>
     </AuthProvider>
   );

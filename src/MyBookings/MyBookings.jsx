@@ -3,16 +3,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { toast, ToastContainer } from "react-toastify";
+import NavbarBooking from "../Navbar/NavbarBooking";
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const { auth } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -33,10 +32,6 @@ const MyBookings = () => {
 
     if (auth.token) fetchBookings();
   }, [auth.id, auth.token]);
-
-  const handleBackClick = () => {
-    navigate("/events");
-  };
 
   const handleDeleteClick = (booking) => {
     setSelectedBooking(booking);
@@ -75,14 +70,7 @@ const MyBookings = () => {
   return (
     <div>
       <div>
-        <nav className="navbar navbar-dark bg-dark">
-          <div className="container-fluid">
-            <button className="btn btn-outline-light" onClick={handleBackClick}>
-              <FontAwesomeIcon icon={faArrowLeft} className="me-1" />
-              Back
-            </button>
-          </div>
-        </nav>
+        <NavbarBooking/>
 
         <div className="container mt-4">
           <h2>My Bookings</h2>
