@@ -115,7 +115,7 @@ const Events = () => {
   const handleConfirmAction = async () => {
     try {
       if (confirmationAction === "book") {
-        await axios.post(`http://localhost:8765/users/${auth.id}/register-event/${currentEvent.id}`, {}, {
+        await axios.post(`http://localhost:8765/bookings/user/${auth.id}/event/${currentEvent.id}`, {}, {
           headers: {
             Authorization: `Bearer ${auth.token}`,
           },
@@ -350,7 +350,7 @@ const Events = () => {
         </div>
       </div>
 
-      <ToastContainer />
+      <ToastContainer position="top-center" />
     </div>
   );
 };

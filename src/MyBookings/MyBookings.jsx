@@ -152,7 +152,7 @@ const MyBookings = () => {
           </div>
         )}
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-center"/>
     </div>
   );
 };

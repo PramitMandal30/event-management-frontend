@@ -47,7 +47,7 @@ const Signin = () => {
 
   return (
     <div className="authenticateUser">
-      <ToastContainer/>
+      <ToastContainer position="top-center"/>
       <h2 className="formTitle">Log In</h2>
       <form className="addUserForm" onSubmit={handleSubmit}>
         <div className="mb-3 inputGroup">

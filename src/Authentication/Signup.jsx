@@ -63,7 +63,7 @@ const Signup = () => {
 
   return (
     <div className="addUser">
-      <ToastContainer />
+      <ToastContainer position="top-center"/>
       <h2 className="formTitle">Sign Up</h2>
       <form className="addUserForm" onSubmit={handleSubmit}>
         <div className="mb-3 inputGroup">
