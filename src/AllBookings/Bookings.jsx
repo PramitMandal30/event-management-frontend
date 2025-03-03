@@ -11,7 +11,7 @@ const Bookings = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get("http://localhost:8765/admins/get-bookings", {
+        const response = await axios.get("http://localhost:8765/bookings", {
           headers: {
             Authorization: `Bearer ${auth.token}`,
           },

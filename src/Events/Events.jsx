@@ -28,7 +28,7 @@ const Events = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://localhost:8765/users/get-events", {
+        const response = await axios.get("http://localhost:8765/events", {
           headers: {
             Authorization: `Bearer ${auth.token}`,
           },
@@ -70,7 +70,7 @@ const Events = () => {
     e.preventDefault();
     try {
       if (mode === "add") {
-        const response = await axios.post("http://localhost:8765/admins/create-event", currentEvent, {
+        const response = await axios.post("http://localhost:8765/events", currentEvent, {
           headers: {
             Authorization: `Bearer ${auth.token}`,
           },
@@ -79,7 +79,7 @@ const Events = () => {
         setEvents((prev) => [...prev, newEvent]);
         toast.success("Event added successfully!");
       } else if (mode === "update") {
-        const response = await axios.put(`http://localhost:8765/admins/update-event/${currentEvent.id}`, currentEvent, {
+        const response = await axios.put(`http://localhost:8765/events/${currentEvent.id}`, currentEvent, {
           headers: {
             Authorization: `Bearer ${auth.token}`,
           },
@@ -122,7 +122,7 @@ const Events = () => {
         });
         toast.success("Successfully booked the event!");
       } else if (confirmationAction === "delete") {
-        await axios.delete(`http://localhost:8765/admins/delete-event/${currentEvent.id}`, {
+        await axios.delete(`http://localhost:8765/events/${currentEvent.id}`, {
           headers: {
             Authorization: `Bearer ${auth.token}`,
           },

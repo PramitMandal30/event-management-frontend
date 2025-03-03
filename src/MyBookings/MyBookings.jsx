@@ -17,7 +17,7 @@ const MyBookings = () => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8765/users/user-id/${auth.id}`,
+          `http://localhost:8765/bookings/user/${auth.id}`,
           {
             headers: {
               Authorization: `Bearer ${auth.token}`,
@@ -42,7 +42,7 @@ const MyBookings = () => {
     if (selectedBooking) {
       try {
         await axios.delete(
-          `http://localhost:8765/users/user/${auth.id}/event/${selectedBooking.eventId}`,
+          `http://localhost:8765/bookings/user/${auth.id}/event/${selectedBooking.eventId}`,
           {
             headers: {
               Authorization: `Bearer ${auth.token}`,
